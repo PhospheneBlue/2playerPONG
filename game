@@ -1,0 +1,91 @@
+GlowScript 3.2 VPython
+
+#Henry Jankowski//2021
+gameon = True
+topbar = 100
+bottombar = topbar*(-1)
+leftbar = topbar*(-1)
+rightbar = leftbar * -1
+ballsize = 5
+boxsize = 5
+ballmovex = .424365
+ballmovey = .4765
+padsize = 25
+c1 = 3
+c2 = 3
+
+bl=box(pos=vec(-100,0,0), size = vec(5,200,0), color = vec(100,100,100))           #left barrier wall
+br=box(pos=vec(100,0,0), size = vec(5,200,0), color = vec(100,100,100))            #right barrier wall
+bt=box(pos=vec(0,100,0), size = vec(205,5,0), color = vec(100,100,100))            #top barrier wall
+bb=box(pos=vec(0,-100,0), size = vec(205,5,0), color = vec(100,100,100))           #bottom barrier wall
+
+bpaddle=box(pos=vec(0,-94,0), size = vec(padsize,4,0), color = vec(0,0,255))        #top/P2 paddle
+tpaddle=box(pos=vec(0,94,0), size = vec(padsize,4,0), color = vec(0,0,255))        #bottom/P1 paddle
+ball=sphere(pos=vec(0,-87,0), radius = 5, color = vec(100,0,0))                    #playing ball
+
+p1name = input('Player 1 (Bottom paddle) name:')
+p2name = input('Player 2 (Top Paddle) name:')
+
+while gameon == True:
+    rate(300)
+    if True:
+#Start/Reset Game (input)
+        v = keysdown()
+        if "q" in v:                               
+            gameon = True
+#Halt Game
+        if c1 < 1 or c2 < 1:
+            gameon = False
+            
+        if gameon == True:
+#move ball
+            ball.pos.y = ball.pos.y + ballmovey
+            ball.pos.x = ball.pos.x + ballmovex
+#top and bottom bounce
+        
+            if ball.pos.y <= bottombar+boxsize/2+ballsize:
+                ballmovey = ballmovey * -1
+                c1 = c1 - 1
+                print(p2name, 'lost a life!')
+                print(c1)
+                print('Lives remaining')
+            if ball.pos.y >= topbar-boxsize/2-ballsize:
+                ballmovey = ballmovey * -1
+                c2 = c2 - 1
+                print(p1name, 'lost a life!')
+                print(c2)
+                print('Lives remaining')
+            if gameon == False:
+                print('Game over!')
+                print('The winner is:')
+            if gameon == False and c1 > c2:
+                print(p1name)
+            if gameon == False and c2 > c1:
+                print(p2name)
+#left and right bounce
+            if ball.pos.x >= rightbar-boxsize/2-ballsize:
+                ballmovex = ballmovex * -1
+            if ball.pos.x <= leftbar+boxsize/2+ballsize:
+                ballmovex = ballmovex * -1
+
+            bPaddlePosL = bpaddle.pos.x - padsize*.5
+            bPaddlePosR = bpaddle.pos.x + padsize*.5
+            tPaddlePosL = tpaddle.pos.x - padsize*.5
+            tPaddlePosR = tpaddle.pos.x + padsize*.5
+#Paddle Movement (input)
+            p1 = keysdown()
+            p2 = keysdown()
+            if "right" in p1 and bpaddle.pos.x < 84.5:     #Right/Bottom Movement
+                bpaddle.pos.x = bpaddle.pos.x + .7
+            if "left" in p1 and bpaddle.pos.x > -84.5:     #Left/Bottom Movement
+                bpaddle.pos.x = bpaddle.pos.x - .7
+            if "d" in p2 and tpaddle.pos.x < 84.5:         #Right/Top Movement
+                tpaddle.pos.x = tpaddle.pos.x + .7
+            if "a" in p2 and tpaddle.pos.x > -84.5:        #Left/Top Movement
+                tpaddle.pos.x = tpaddle.pos.x - .7
+        
+#Paddle Physics
+            if ball.pos.y < -89 and ball.pos.x > bPaddlePosL and ball.pos.x < bPaddlePosR:
+                ballmovey = ballmovey * -1
+            if ball.pos.y > 89 and ball.pos.x > tPaddlePosL and ball.pos.x < tPaddlePosR:
+                ballmovey = ballmovey * -1
